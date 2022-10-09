@@ -8,8 +8,8 @@ package za.ac.cput.repository;
 
 import za.ac.cput.domain.CarDelivery;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ICarDeliveryRepository extends IRepository<CarDelivery, String> {
-    public Set<CarDelivery> getAll();
+    public List<CarDelivery> getAll();
 }

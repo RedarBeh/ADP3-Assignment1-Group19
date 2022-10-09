@@ -7,17 +7,17 @@ package za.ac.cput.repository;
  */
 
 import za.ac.cput.domain.CarDelivery;
+import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
-
+@Repository
 public class CarDeliveryRepository implements ICarDeliveryRepository {
     private static CarDeliveryRepository repository = null;
-    private Set<CarDelivery> deliveries = null;
+    private List<CarDelivery> deliveries = null;
 
-    public CarDeliveryRepository() { deliveries = new HashSet<CarDelivery>();}
+    public CarDeliveryRepository() { deliveries = new ArrayList<CarDelivery>();}
     ///////////////////// Perform Singleton
     public static CarDeliveryRepository getRepository() {
         if (repository == null) {
@@ -31,7 +31,7 @@ public class CarDeliveryRepository implements ICarDeliveryRepository {
 
 
     @Override
-    public  CarDelivery create(CarDelivery carDelivery) {
+    public  CarDelivery save(CarDelivery carDelivery) {
         boolean deliver = deliveries.add(carDelivery);
         if (!deliver) {
             return null;
@@ -40,14 +40,13 @@ public class CarDeliveryRepository implements ICarDeliveryRepository {
     }
 
     @Override
-    public CarDelivery read(String carDelivId) {
-        CarDelivery carDelivery = deliveries.stream()
-                .filter(d -> d.getCarDelivId().equals(carDelivId))
-                .findAny()
-                .orElse(null);
-        return carDelivery;
+    public Optional<CarDelivery> read(String carDelivId) {
+        return deliveries.stream()
+                .filter(d -> d.getCarDelivId().equalsIgnoreCase(carDelivId))
+                .findFirst();
+        
     }
-
+/*
     @Override
     public CarDelivery update(CarDelivery carDelivery) {
         CarDelivery oldCarDelivery = read(carDelivery.getCarDelivId());
@@ -58,14 +57,12 @@ public class CarDeliveryRepository implements ICarDeliveryRepository {
         }
         return null;
     }
-
+*/
     @Override
-    public boolean delete(String carDelivId) {
-        CarDelivery IdToDelete = read(carDelivId);
-        if(IdToDelete == null) return false;
-        deliveries.remove(IdToDelete);return true;
+    public void delete(CarDelivery id) {
+        this.deliveries.remove(id);
     }
 
     @Override
-    public Set<CarDelivery> getAll() {return deliveries;}
+    public List<CarDelivery> getAll() {return deliveries;}
 }

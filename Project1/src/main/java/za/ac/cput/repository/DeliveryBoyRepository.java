@@ -7,16 +7,15 @@ package za.ac.cput.repository;
  */
 
 import za.ac.cput.domain.DeliveryBoy;
-import za.ac.cput.domain.Upholstery;
+import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
+@Repository
 public class DeliveryBoyRepository implements IDeliveryBoyRepository{
     private static DeliveryBoyRepository repository = null;
-    private Set<DeliveryBoy> deliveries = null;
+    private List<DeliveryBoy> deliveries = null;
 
-    public DeliveryBoyRepository() { deliveries = new HashSet<DeliveryBoy>();}
+    public DeliveryBoyRepository() { deliveries = new ArrayList<DeliveryBoy>();}
     ///////////////////// Perform Singleton
     public static DeliveryBoyRepository getRepository() {
         if (repository == null) {
@@ -30,7 +29,7 @@ public class DeliveryBoyRepository implements IDeliveryBoyRepository{
 
 
     @Override
-    public  DeliveryBoy create(DeliveryBoy deliveryBoy) {
+    public  DeliveryBoy save(DeliveryBoy deliveryBoy) {
         boolean deliver = deliveries.add(deliveryBoy);
         if (!deliver) {
             return null;
@@ -39,14 +38,12 @@ public class DeliveryBoyRepository implements IDeliveryBoyRepository{
     }
 
     @Override
-    public DeliveryBoy read(String delivBId) {
-        for (DeliveryBoy D : deliveries)
-            if(D.getDelivBId().equals(delivBId)){
-                return D;
-            }
-        return null;
+    public Optional<DeliveryBoy> read(String delivBId) {
+        return deliveries.stream()
+                .filter(d -> d.getDelivBId().equalsIgnoreCase(delivBId))
+                .findFirst();
     }
-
+/*
     @Override
     public DeliveryBoy update(DeliveryBoy deliveryBoy) {
         DeliveryBoy oldDeliveryBoy = read(deliveryBoy.getDelivBId());
@@ -56,17 +53,13 @@ public class DeliveryBoyRepository implements IDeliveryBoyRepository{
             return deliveryBoy;
         }
         return null;
+    }*/
+
+    @Override
+    public void delete(DeliveryBoy cd) {
+        deliveries.remove(cd);
     }
 
     @Override
-    public boolean delete(String delivBId) {
-        DeliveryBoy IdToDelete = read(delivBId);
-        if(IdToDelete == null)
-            return false;
-        deliveries.remove(IdToDelete);
-        return true;
-    }
-
-    @Override
-    public Set<DeliveryBoy> getAll() {return deliveries;}
+    public List<DeliveryBoy> getAll() {return deliveries;}
 }
